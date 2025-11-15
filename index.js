@@ -3,6 +3,7 @@ const dotenv = require('dotenv').config()
 const connectDB = require('./config/db')
 const authController = require('./controllers/auth')
 const userController = require('./controllers/user')
+const postController = require('./controllers/post')
 const app = express()
 const port = process.env.PORT
 
@@ -11,5 +12,6 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use('/auth', authController)
 app.use('/user', userController)
+app.use('/post', postController)
 
 app.listen(port, () => console.log('server is connected successfully'))

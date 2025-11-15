@@ -34,7 +34,7 @@ authController.post('/register', async (req, res) => {
   }
 })
 
-authController.post('/login', verifyToken, async (req, res) => {
+authController.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email })
     if (!user) {

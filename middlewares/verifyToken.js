@@ -1,20 +1,23 @@
-const jwt = require('jsonwebtoken')
+const jwt = require("jsonwebtoken");
 
-const verifyToken = async (req, res, next) => {
-  if (!req.headers.authorization) {
-    return res.status(403).json({ msg: "Not authorized. No token" })
+const verifyToken = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(403).json({ msg: "Not authorized. No token" });
   }
 
-  if (req.headers.authorization && req.headers.authorization.startWith("Bearer")) {
-    const token = req.headers.authorization.split(' ')[1]
-    jwt.verify(token, process.env.JWT_SECRET, (err, data) => {
-      if (err) return res.status(403).json({ msg: "wrong or expired token" })
-      else {
-        req.user = data
-      }
-    })
-    return res.status(403).json({ msg: "Not authorized. No token" })
-  }
-}
+  const token = authHeader.split(" ")[1];
 
-module.exports = verifyToken
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      console.log("JWT VERIFY ERROR:", err.message);
+      return res.status(403).json({ msg: "Wrong or expired token" });
+    }
+
+    req.user = decoded; // { id, iat, exp }
+    next();
+  });
+};
+
+module.exports = verifyToken;
